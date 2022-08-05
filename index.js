@@ -7,7 +7,8 @@ const ora = require("ora");
 const colors = require("colors");
 const chalk = require("chalk");
 const spinner = ora("Logging into bot.").start();
-
+term.setPalette("xterm");
+term.clear();
 let a = 0;
 let loading = setInterval(() => {
   if (a % 3 == 0) {
@@ -41,17 +42,25 @@ client.on("ready", async () => {
       terminate();
     }
   });
+
+
   function terminate() {
     term.grabInput(false);
+    term.clear();
     setTimeout(function () {
       process.exit();
     }, 100);
-  }
+  } 
+
 
   let document = term.createDocument({
     label: "Document",
-
+    bgColor:"cyan",
   });
+
+  setInterval(() => {
+      document.draw();
+  }, 1000/20);
   let rowMenu = new termkit.RowMenu({
     parent: document,
     x: 0,
@@ -85,17 +94,15 @@ client.on("ready", async () => {
   let channel;
 
 
-  
-  renderGuilds();
 
-
-   renderGuilds=()=> {
+  renderGuilds = () => {
+    document.hide(true);
     term.clear();
     term.fullscreen();
     term.cyan("Choose Server: ");
     let guilds = client.guilds.cache.map((g) => g.name + "-" + g.id);
 
-    term.singleColumnMenu(guilds, {}, function (error, response) {
+    term.gridMenu(guilds, {}, function (error, response) {
       if (error) {
         console.error(error);
       } else {
@@ -103,7 +110,7 @@ client.on("ready", async () => {
           (g) =>
             g.id ==
             response.selectedText.split("-")[
-              response.selectedText.split("-").length - 1
+            response.selectedText.split("-").length - 1
             ]
         );
         renderChannels();
@@ -112,6 +119,7 @@ client.on("ready", async () => {
   }
 
   renderChannels = () => {
+    document.hide(true);
     term.clear();
     term.fullscreen();
     term.cyan("Choose Channel: ");
@@ -121,7 +129,7 @@ client.on("ready", async () => {
       .filter((c) => c.type == 0)
       .map((c) => c.name + "-" + c.id);
 
-    term.singleColumnMenu(channels, {}, function (error, response) {
+    term.gridMenu(channels, {}, function (error, response) {
       if (error) {
         console.error(error);
       } else {
@@ -129,7 +137,7 @@ client.on("ready", async () => {
           (c) =>
             c.id ==
             response.selectedText.split("-")[
-              response.selectedText.split("-").length - 1
+            response.selectedText.split("-").length - 1
             ]
         );
         renderMessages();
@@ -140,8 +148,14 @@ client.on("ready", async () => {
   renderMessages = () => {
     term.clear();
     term.fullscreen();
-    document.show();
+    document.show(true);
+    rowMenu.show(true);
   };
+
+  
+
+  
+  renderGuilds();
 });
 
 async function wait(ms) {
