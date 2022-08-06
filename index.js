@@ -322,11 +322,13 @@ client.on("ready", async () => {
       serverList.appendItem(guild.name).guild = guild;
     });
     screen.append(serverList);
-    serverList.focus();
+    
     //Remove all the other screen elements
     if (channelList) screen.remove(channelList);
     screen.remove(messageList);
     screen.remove(input);
+    screen.render();
+    serverList.focus();
   }
 
   function renderChannels() {
@@ -375,11 +377,13 @@ client.on("ready", async () => {
     });
 
     screen.append(channelList);
-    channelList.focus();
+    
 
     screen.remove(serverList);
     screen.remove(messageList);
     screen.remove(input);
+    screen.render();
+    channelList.focus();
   }
 
   async function renderMessages() {
