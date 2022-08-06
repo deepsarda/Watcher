@@ -4,7 +4,7 @@
  * https://github.com/chjj/blessed
  */
 
-exports.match = function(r1, g1, b1) {
+ exports.match = function(r1, g1, b1) {
   if (typeof r1 === 'string') {
     var hex = r1;
     if (hex[0] !== '#') {
@@ -286,6 +286,22 @@ exports.colors = (function() {
   return cols;
 }());
 
+// Map higher colors to the first 8 colors.
+// This allows translation of high colors to low colors on 8-color terminals.
+exports.ccolors = (function() {
+  var _cols = exports.vcolors.slice(), cols = exports.colors.slice(), out;
+
+  exports.vcolors = exports.vcolors.slice(0, 8);
+  exports.colors = exports.colors.slice(0, 8);
+
+  out = cols.map(exports.match);
+
+  exports.colors = cols;
+  exports.vcolors = _cols;
+  exports.ccolors = out;
+
+  return out;
+}());
 
 var colorNames = exports.colorNames = {
   // special

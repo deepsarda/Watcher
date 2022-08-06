@@ -2,8 +2,9 @@ const dotenv = require("dotenv");
 dotenv.config();
 const Discord = require("discord.js");
 const ora = require("ora");
-const colors = require("colors");
-const chalk = require("chalk");
+let chalk = require("chalk");
+chalk= new chalk.Instance({level: 3});
+require('colors')
 const spinner = ora("Logging into bot.").start();
 const blessed = require("./blessed");
 
@@ -42,7 +43,7 @@ client.on("ready", async () => {
   let screen = blessed.screen({
     fullUnicode: true,
     forceUnicode: true,
-    useBCE: false,
+    useBCE: true,
     debug: true,
   });
 
@@ -78,6 +79,8 @@ client.on("ready", async () => {
     },
     fg: "#caced6",
     bg: "grey",
+    border: "line",
+
     focus: {
       fg: "#f6f6f6",
       bg: "black",
@@ -243,7 +246,7 @@ client.on("ready", async () => {
 
     } catch (e) {
       console.error(e);
-    } 
+    }
   });
 
   messageList = blessed.list({
@@ -322,7 +325,7 @@ client.on("ready", async () => {
       serverList.appendItem(guild.name).guild = guild;
     });
     screen.append(serverList);
-    
+
     //Remove all the other screen elements
     if (channelList) screen.remove(channelList);
     screen.remove(messageList);
@@ -377,7 +380,7 @@ client.on("ready", async () => {
     });
 
     screen.append(channelList);
-    
+
 
     screen.remove(serverList);
     screen.remove(messageList);
@@ -408,9 +411,15 @@ client.on("ready", async () => {
   async function renderMessage(message) {
     if (channel) {
       if (channel.id == message.channel.id) {
-        let c = message.member
-          ? chalk.hex(message.member.displayHexColor)
+        
+        let hex;
+        if (message.member ) if(message.member.displayHexColor=="#000000") hex = "#ffd700"; else hex = message.member.displayHexColor;
+        
+        let c = message.member 
+          ? chalk.hex(hex)
           : chalk.cyan;
+
+          
         messageList.addItem(
           (new Date().getHours() + ":" + new Date().getMinutes()).gray +
           " " +
